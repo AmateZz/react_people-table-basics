@@ -1,5 +1,6 @@
+// PeopleList.js
 import classNames from 'classnames';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Loader } from './Loader';
 
 type Person = {
@@ -15,24 +16,17 @@ type Person = {
 type PeopleListProps = {
   people: Person[];
   isLoading: boolean;
+  highlightedPersonSlug?: string; // Новый проп для передачи выделенного slug
 };
 
-export const PeopleList = ({ people, isLoading }: PeopleListProps) => {
-  const getHrefMother = (person: Person): string => {
-    const motherPerson = people.find(per => per.name === person.motherName);
-    const motherHref = motherPerson?.slug;
-
-    return motherHref ? motherHref : ``;
+export const PeopleList = ({
+  people,
+  isLoading,
+  highlightedPersonSlug,
+}: PeopleListProps) => {
+  const getHref = (name) => {
+    return people.find(per => name === per.name);
   };
-
-  const getHrefFather = (person: Person): string => {
-    const fatherPerson = people.find(per => per.name === person.fatherName);
-    const fatherHref = fatherPerson?.slug;
-
-    return fatherHref ? fatherHref : ``;
-  };
-
-  const { pathname } = useLocation();
 
   return isLoading ? (
     <>
@@ -65,10 +59,10 @@ export const PeopleList = ({ people, isLoading }: PeopleListProps) => {
             {people.map((person: Person) => (
               <tr
                 data-cy="person"
-                key={person.name}
+                key={person.slug}
                 className={classNames({
                   'has-background-warning':
-                    `/people/${person.slug}` === pathname,
+                    person.slug === highlightedPersonSlug, // Добавляем класс, если slug совпадает
                 })}
               >
                 <td>
@@ -76,41 +70,40 @@ export const PeopleList = ({ people, isLoading }: PeopleListProps) => {
                     className={classNames({
                       'has-text-danger': person.sex === 'f',
                     })}
-                    to={`${person.slug}`}
+                    to={`/people/${person.slug}`}
                   >
                     {person.name}
                   </Link>
                 </td>
-
                 <td>{person.sex}</td>
                 <td>{person.born}</td>
                 <td>{person.died}</td>
-
                 <td>
-                  {!getHrefMother(person) && !person.motherName && '-'}
-                  {person.motherName &&
-                    !getHrefMother(person) &&
-                    person.motherName}
-                  {getHrefMother(person) && (
-                    <Link
-                      className="has-text-danger"
-                      to={`${getHrefMother(person)}`}
-                    >
-                      {person.motherName}
-                    </Link>
-                  )}
+                  {getHref(person.motherName) &&
+                    (person.motherName ? (
+                      <Link
+                        className="has-text-danger"
+                        to={`/people/${getHref(person.motherName)?.slug}`}
+                      >
+                        {person.motherName}
+                      </Link>
+                    ) : (
+                      '-'
+                    ))}
+                  {!getHref(person.motherName) &&
+                    (person.motherName ? person.motherName : '-')}
                 </td>
-
                 <td>
-                  {!getHrefFather(person) && !person.fatherName && '-'}
-                  {person.fatherName &&
-                    !getHrefFather(person) &&
-                    person.fatherName}
-                  {getHrefFather(person) && (
-                    <Link to={`${getHrefFather(person)}`}>
-                      {person.fatherName || `-`}
-                    </Link>
-                  )}
+                  {getHref(person.fatherName) &&
+                    (person.fatherName ? (
+                      <Link to={`/people/${getHref(person.fatherName)?.slug}`}>
+                        {person.fatherName}
+                      </Link>
+                    ) : (
+                      '-'
+                    ))}
+                  {!getHref(person.fatherName) &&
+                    (person.fatherName ? person.fatherName : '-')}
                 </td>
               </tr>
             ))}

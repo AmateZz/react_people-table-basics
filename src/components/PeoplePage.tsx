@@ -1,4 +1,6 @@
+// PeoplePage.js
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { getPeople } from '../api';
 import { PeopleList } from './PeopleList';
 
@@ -9,39 +11,39 @@ type Person = {
   died: number;
   mother: string;
   father: string;
+  slug: string;
 };
 
 export const PeoplePage = () => {
+  const { personHref } = useParams(); // Получаем personHref из параметров URL
   const [people, setPeople] = useState<Person[]>([]);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     getPeople()
       .then(fetchedPeople => {
-        setLoading(false);
-
         setPeople(fetchedPeople);
+        setError(null);
       })
-      .catch(() => {
-        setLoading(false);
-
-        setError('Something went wrong');
-      });
+      .catch(() => setError('Something went wrong'))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (error === '') {
-    return <PeopleList people={people} isLoading={loading} />;
-  } else if (error !== '') {
+  if (error) {
     return (
-      <div className="block">
-        <div className="box table-container">
-          <p data-cy="peopleLoadingError" className="has-text-danger">
-            Something went wrong
-          </p>
-        </div>
-      </div>
+      <p data-cy="peopleLoadingError" className="has-text-danger">
+        {error}
+      </p>
     );
   }
+
+  return (
+    <PeopleList
+      people={people}
+      isLoading={loading}
+      highlightedPersonSlug={personHref}
+    />
+  );
 };

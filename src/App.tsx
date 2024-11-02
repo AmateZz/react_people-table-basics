@@ -23,9 +23,9 @@ export const App = () => {
                     </div>
                   }
                 />
-                <Route path="/people" element={<PeoplePage />}>
-                  <Route path=":personHref" element={<PeoplePage />} />
-                </Route>
+                <Route path="/people" element={<PeoplePage />} />
+
+                <Route path="/people/:personHref" element={<PeoplePage />} />
               </Routes>
             </div>
           </div>
