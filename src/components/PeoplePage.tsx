@@ -18,7 +18,7 @@ export const PeoplePage = () => {
   const { personHref } = useParams(); // Получаем personHref из параметров URL
   const [people, setPeople] = useState<Person[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);

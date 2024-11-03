@@ -24,7 +24,7 @@ export const PeopleList = ({
   isLoading,
   highlightedPersonSlug,
 }: PeopleListProps) => {
-  const getHref = (name) => {
+  const getHref = name => {
     return people.find(per => name === per.name);
   };
 
