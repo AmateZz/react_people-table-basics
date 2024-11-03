@@ -1,4 +1,3 @@
-// PeoplePage.js
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getPeople } from '../api';
@@ -15,7 +14,7 @@ type Person = {
 };
 
 export const PeoplePage = () => {
-  const { personHref } = useParams(); // Получаем personHref из параметров URL
+  const { personHref } = useParams();
   const [people, setPeople] = useState<Person[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

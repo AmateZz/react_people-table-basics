@@ -1,4 +1,3 @@
-// PeopleList.js
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Loader } from './Loader';
@@ -16,7 +15,7 @@ type Person = {
 type PeopleListProps = {
   people: Person[];
   isLoading: boolean;
-  highlightedPersonSlug?: string; // Новый проп для передачи выделенного slug
+  highlightedPersonSlug?: string;
 };
 
 export const PeopleList = ({
@@ -24,7 +23,7 @@ export const PeopleList = ({
   isLoading,
   highlightedPersonSlug,
 }: PeopleListProps) => {
-  const getHref = name => {
+  const findPersonByName = (name: string | null) => {
     return people.find(per => name === per.name);
   };
 
@@ -62,7 +61,7 @@ export const PeopleList = ({
                 key={person.slug}
                 className={classNames({
                   'has-background-warning':
-                    person.slug === highlightedPersonSlug, // Добавляем класс, если slug совпадает
+                    person.slug === highlightedPersonSlug,
                 })}
               >
                 <td>
@@ -79,30 +78,26 @@ export const PeopleList = ({
                 <td>{person.born}</td>
                 <td>{person.died}</td>
                 <td>
-                  {getHref(person.motherName) &&
-                    (person.motherName ? (
-                      <Link
-                        className="has-text-danger"
-                        to={`/people/${getHref(person.motherName)?.slug}`}
-                      >
-                        {person.motherName}
-                      </Link>
-                    ) : (
-                      '-'
-                    ))}
-                  {!getHref(person.motherName) &&
+                  {findPersonByName(person.motherName) && (
+                    <Link
+                      className="has-text-danger"
+                      to={`/people/${findPersonByName(person.motherName)?.slug}`}
+                    >
+                      {person.motherName}
+                    </Link>
+                  )}
+                  {!findPersonByName(person.motherName) &&
                     (person.motherName ? person.motherName : '-')}
                 </td>
                 <td>
-                  {getHref(person.fatherName) &&
-                    (person.fatherName ? (
-                      <Link to={`/people/${getHref(person.fatherName)?.slug}`}>
-                        {person.fatherName}
-                      </Link>
-                    ) : (
-                      '-'
-                    ))}
-                  {!getHref(person.fatherName) &&
+                  {findPersonByName(person.fatherName) && (
+                    <Link
+                      to={`/people/${findPersonByName(person.fatherName)?.slug}`}
+                    >
+                      {person.fatherName}
+                    </Link>
+                  )}
+                  {!findPersonByName(person.fatherName) &&
                     (person.fatherName ? person.fatherName : '-')}
                 </td>
               </tr>
